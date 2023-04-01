@@ -44,26 +44,36 @@ Please think step by step and answer "True" if it contains hallucination, or "Fa
 """
 
 
-def complete(oai, df, model="gpt-3.5-turbo", 
-             input_text_column="body_1", 
-             generated_text_column="body_2", 
-             output_column="has-hallucination-gpt-3.5-turbo"):
-    print('using udpated CoT5')
+def complete(
+    oai,
+    df,
+    model="gpt-3.5-turbo",
+    input_text_column="body_1",
+    generated_text_column="body_2",
+    output_column="has-hallucination-gpt-3.5-turbo",
+):
+    print("using udpated CoT5")
     for index, row in tqdm(df.iterrows()):
-        if output_column in row.index and (row[output_column] == "True" or row[output_column] == "False"):
+        if output_column in row.index and (
+            row[output_column] == "True"
+            or row[output_column] == "False"
+            or row[output_column] == "N/A"
+        ):
             continue
         result = oai.ChatCompletion.create(
             model=model,
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": prompt_template.format(
-                    input_text=row[input_text_column], 
-                    generated_text=row[generated_text_column]
-                )},
-            ]
+                {
+                    "role": "user",
+                    "content": prompt_template.format(
+                        input_text=row[input_text_column],
+                        generated_text=row[generated_text_column],
+                    ),
+                },
+            ],
         )
-        message = result['choices'][0]['message']['content']
-        print(message)
+        message = result["choices"][0]["message"]["content"]
         if "True" in message and "False" in message:
             df.loc[index, output_column] = "N/A"
         elif "True" in message:
