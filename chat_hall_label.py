@@ -55,7 +55,7 @@ def complete(
     print("using udpated CoT5")
     for index, row in tqdm(df.iterrows()):
         if output_column in row.index and (
-            row[output_column].isin(["True", "False", "N/A", True, False])
+            row[output_column] in ["True", "False", "N/A", True, False]
         ):
             continue
         result = oai.ChatCompletion.create(
