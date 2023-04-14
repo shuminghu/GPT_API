@@ -1,0 +1,11 @@
+data:
+  input_csv: "/PATH/TO/INPUT/CSV"
+  output_csv: "/PATH/TO/OUT/CSV"
+  input_text_column: "body_1"
+  generated_text_column: "body_2"
+  output_column_prefix: "has-hallucination"
+
+openai:
+  organization: "YOUR-ORG-KEY"
+  api_key: "YOUR-API-KEY"
+  model: "gpt-4"
