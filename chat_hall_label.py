@@ -1,4 +1,5 @@
 from tqdm import tqdm
+import time
 
 prompt_template = """This task is to evaluate if the generated text contains hallucination given an input text. 
 Hallucination is defined when there is information in the generated text that is not grounded in the input text or common sense, e.g. numbers, URLs or words with different meaning. 
@@ -50,8 +51,10 @@ def complete(
     model="gpt-3.5-turbo",
     input_text_column="body_1",
     generated_text_column="body_2",
-    output_column="has-hallucination-gpt-3.5-turbo",
+    output_column_prefix="has-hallucination",
+    sleep_sec=0,
 ):
+    output_column = f"{output_column_prefix}_{model}"
     print("using udpated CoT5")
     for index, row in tqdm(df.iterrows()):
         if output_column in row.index and (
@@ -71,6 +74,10 @@ def complete(
                 },
             ],
         )
+        if sleep_sec:
+            print(f"Waiting {sleep_sec} sec ...")
+            time.sleep(sleep_sec)
+            
         message = result["choices"][0]["message"]["content"]
         if "True" in message and "False" in message:
             df.loc[index, output_column] = "N/A"
